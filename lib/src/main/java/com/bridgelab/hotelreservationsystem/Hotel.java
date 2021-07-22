@@ -1,6 +1,4 @@
 package com.bridgelab.hotelreservationsystem;
-import java.util.Objects;
-
 public class Hotel 
 {
 
@@ -102,5 +100,4 @@ public class Hotel
 	{
 		this.rating = rating;
 	}
-
 }
