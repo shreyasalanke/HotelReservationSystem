@@ -18,7 +18,7 @@ public class HotelReservation
 	{
 		this.hotels = new ArrayList<Hotel>();
 	}
-
+	
 	public void add(Hotel hotel) 
 	{
 		hotels.add(hotel);
@@ -74,7 +74,7 @@ public class HotelReservation
 		calendar.setTime(startDay);
 
 		int weekDays = 0;
-		while (!calendar.getTime().after(endDay))
+		while (!calendar.getTime().after(endDay)) 
 		{
 			int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
 			if ((dayOfWeek > 1) && (dayOfWeek < 7)) 
