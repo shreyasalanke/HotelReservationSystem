@@ -180,4 +180,25 @@ public class HotelReservationTest
 			e.getMessage();
 		}
 	}
+	
+	@Test
+	public void whenGivenDateRangeShouldReturnCheapestAndBestRatedHotelForRegularCustomer() 
+	{
+		Hotel hotel1 = new Hotel("Lakewood", 110, 90, 3, 80, 80);
+		Hotel hotel2 = new Hotel("Bridgewood", 150, 50, 4, 110, 50);
+		Hotel hotel3 = new Hotel("Ridgewood", 220, 150, 5, 100, 40);
+		HotelReservation hotelReservation = new HotelReservation();
+		hotelReservation.add(hotel1);
+		hotelReservation.add(hotel2);
+		hotelReservation.add(hotel3);
+		Map<Hotel, Integer> result;
+		try {
+			result = hotelReservation.getCheapestAndBestRatedHotels("11Sep2020", "12Sep2020", "regular");
+			result.forEach(
+					(k, v) -> System.out.println(k.getName() + ", Rating : " + k.getRating() + " and Total Rate " + v));
+			assertNotNull(result);
+		} catch (InvalidCustomerException | InvalidDateRangeException e) {
+			e.getMessage();
+		}
+	}
 }
