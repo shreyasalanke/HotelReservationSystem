@@ -11,20 +11,24 @@ import java.util.Map;
 
 public class HotelReservation 
 {
+
 	private List<Hotel> hotels;
 
 	public HotelReservation() 
 	{
 		this.hotels = new ArrayList<Hotel>();
 	}
+
 	public void add(Hotel hotel)
 	{
 		this.hotels.add(hotel);
 	}
+
 	public List<Hotel> getHotelList() 
 	{
 		return this.hotels;
 	}
+
 	public Map<Integer, Hotel> searchFor(String date1, String date2)
 	{
 		int totalDays = countTotalDays(date1, date2);
@@ -32,6 +36,7 @@ public class HotelReservation
 		int weekendDays = totalDays - weekDays;
 		return getCheapestHotels(weekDays, weekendDays);
 	}
+
 	public Map<Integer, Hotel> getCheapestHotels(int weekDays, int weekendDays) 
 	{
 		Map<Integer, Hotel> hotelCosts = new HashMap<>();
