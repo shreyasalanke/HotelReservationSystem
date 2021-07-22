@@ -88,4 +88,20 @@ public class HotelReservationTest
 				&& hotelList.get(2).getRating() == 5;
 		assertTrue(result);
 	}
+	
+	@Test
+	public void whenGivenDateRangeShouldReturnCheapestBestRatedHotels()
+	{
+		Hotel hotel1 = new Hotel("Lakewood", 110, 90, 80, 80, 3);
+		Hotel hotel2 = new Hotel("Bridgewood", 150, 50, 110, 50, 4);
+		Hotel hotel3 = new Hotel("Ridgewood", 220, 150, 100, 40, 5);
+		HotelReservation hotelReservation = new HotelReservation();
+		hotelReservation.add(hotel1);
+		hotelReservation.add(hotel2);
+		hotelReservation.add(hotel3);
+		Map<Hotel, Integer> result = hotelReservation.getCheapestAndBestRatedHotels("11Sep2020", "12Sep2020");
+		result.forEach(
+				(k, v) -> System.out.println(k.getName() + ", Rating : " + k.getRating() + " and Total Rate " + v));
+		assertNotNull(result);
+	}
 }
