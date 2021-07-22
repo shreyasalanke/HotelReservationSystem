@@ -100,4 +100,5 @@ public class Hotel
 	{
 		this.rating = rating;
 	}
+
 }

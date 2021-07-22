@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HotelReservation
+public class HotelReservation 
 {
 
 	private List<Hotel> hotels;
@@ -21,7 +21,7 @@ public class HotelReservation
 		this.hotels = new ArrayList<Hotel>();
 	}
 
-	public void add(Hotel hotel) 
+	public void add(Hotel hotel)
 	{
 		hotels.add(hotel);
 	}
@@ -38,31 +38,25 @@ public class HotelReservation
 		int weekDays = countWeekDays(date1, date2);
 		int weekendDays = totalDays - weekDays;
 
-		if (hotelType.equals("cheapest") && customerType.equals("regular"))
-			return searchForCheapestHotels(weekDays, weekendDays, "regular");
-		if (hotelType.equals("cheapest") && customerType.equals("rewards"))
-			return searchForCheapestHotels(weekDays, weekendDays, "rewards");
-		if (hotelType.equals("best") && customerType.equals("regular"))
-			return searchForBestRatedHotels(weekDays, weekendDays, "regular");
-		if (hotelType.equals("best") && customerType.equals("rewards"))
-			return searchForBestRatedHotels(weekDays, weekendDays, "regular");
+		if (hotelType.equals("cheapest"))
+			return searchForCheapestHotels(weekDays, weekendDays, customerType);
+
+		if (hotelType.equals("best"))
+			return searchForBestRatedHotels(weekDays, weekendDays, customerType);
 		else
 			return null;
 	}
 
-	public Map<Hotel, Integer> getCheapestHotels(String date1, String date2)
-	{
-		Map<Hotel, Integer> cheapestHotels = searchFor(date1, date2, "cheapest", "regular");
-		return cheapestHotels;
-	}
 
-	public Map<Hotel, Integer> getCheapestHotels(String date1, String date2, String customerType) 
-	{
+	public Map<Hotel, Integer> getCheapestHotels(String date1, String date2, String customerType)
+			throws InvalidCustomerException, InvalidDateRangeException {
+		validateCustomerType(customerType);
+		validateDateRange(date1, date2);
 		Map<Hotel, Integer> cheapestHotels = searchFor(date1, date2, "cheapest", customerType);
 		return cheapestHotels;
 	}
 
-	public Map<Hotel, Integer> searchForCheapestHotels(int weekDays, int weekendDays, String customerType) 
+	public Map<Hotel, Integer> searchForCheapestHotels(int weekDays, int weekendDays, String customerType)
 	{
 
 		Map<Hotel, Integer> hotelCosts = new HashMap<>();
@@ -86,7 +80,7 @@ public class HotelReservation
 		return sortedHotelCosts;
 	}
 
-	public int countTotalDays(String date1, String date2) 
+	public int countTotalDays(String date1, String date2)
 	{
 
 		LocalDate startDate = toLocalDate(date1);
@@ -95,7 +89,7 @@ public class HotelReservation
 		return totalDays;
 	}
 
-	public int countWeekDays(String date1, String date2)
+	public int countWeekDays(String date1, String date2) 
 	{
 
 		LocalDate startDate = toLocalDate(date1);
@@ -118,10 +112,12 @@ public class HotelReservation
 		return weekDays;
 	}
 
-	public Map<Hotel, Integer> getCheapestAndBestRatedHotels(String date1, String date2) 
-	{
+	public Map<Hotel, Integer> getCheapestAndBestRatedHotels(String date1, String date2, String customerType)
+			throws InvalidCustomerException, InvalidDateRangeException {
+		validateCustomerType(customerType);
+		validateDateRange(date1, date2);
 		Map<Hotel, Integer> cheapestAndBestHotels = new HashMap<Hotel, Integer>();
-		Map<Hotel, Integer> cheapestHotels = searchFor(date1, date2, "cheapest", "regular");
+		Map<Hotel, Integer> cheapestHotels = searchFor(date1, date2, "cheapest", customerType);
 		int highestRating = (cheapestHotels.keySet().stream().max(Comparator.comparingInt(Hotel::getRating)).get())
 				.getRating();
 		cheapestHotels.forEach((k, v) -> {
@@ -132,18 +128,15 @@ public class HotelReservation
 	}
 
 	public Map<Hotel, Integer> getBestRatedHotels(String date1, String date2, String customerType)
+			throws InvalidCustomerException, InvalidDateRangeException 
 	{
+		validateCustomerType(customerType);
+		validateDateRange(date1, date2);
 		Map<Hotel, Integer> bestHotels = searchFor(date1, date2, "best", customerType);
 		return bestHotels;
 	}
 
-	public Map<Hotel, Integer> getBestRatedHotels(String date1, String date2) {
-		Map<Hotel, Integer> bestHotels = searchFor(date1, date2, "best", "regular");
-		return bestHotels;
-	}
-
-	public Map<Hotel, Integer> searchForBestRatedHotels(int weekDays, int weekendDays, String customerType)
-	{
+	public Map<Hotel, Integer> searchForBestRatedHotels(int weekDays, int weekendDays, String customerType) {
 		Map<Hotel, Integer> bestHotels = new HashMap<Hotel, Integer>();
 		int highestRating = (hotels.stream().max(Comparator.comparingInt(Hotel::getRating)).get()).getRating();
 
@@ -160,23 +153,21 @@ public class HotelReservation
 		return bestHotels;
 	}
 
-	public Map<Hotel, Integer> getCheapestAndBestRatedHotels(String date1, String date2, String customerType) 
-	{
-		Map<Hotel, Integer> cheapestAndBestHotels = new HashMap<Hotel, Integer>();
-		Map<Hotel, Integer> cheapestHotels = searchFor(date1, date2, "cheapest", customerType);
-		int highestRating = (cheapestHotels.keySet().stream().max(Comparator.comparingInt(Hotel::getRating)).get())
-				.getRating();
-		cheapestHotels.forEach((k, v) -> {
-			if (k.getRating() == highestRating)
-				cheapestAndBestHotels.put(k, v);
-		});
-		return cheapestAndBestHotels;
-	}
-
-	public LocalDate toLocalDate(String date) 
-	{
+	public LocalDate toLocalDate(String date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMMyyyy");
 		LocalDate localDate = LocalDate.parse(date, formatter);
 		return localDate;
+	}
+
+	public void validateCustomerType(String customerType) throws InvalidCustomerException {
+		if (!(customerType.toLowerCase().matches("^regular$") || customerType.toLowerCase().matches("^reward$")))
+			throw new InvalidCustomerException("Invalid Customer Type !!!");
+	}
+
+	public void validateDateRange(String date1, String date2) throws InvalidDateRangeException {
+		LocalDate startDate = toLocalDate(date1);
+		LocalDate endDate = toLocalDate(date2);
+		if (startDate.isAfter(endDate))
+			throw new InvalidDateRangeException("Invalid Date Range !!!");
 	}
 }
